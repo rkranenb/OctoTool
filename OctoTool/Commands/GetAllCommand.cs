@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace OctoTool.Commands {
@@ -15,7 +16,11 @@ namespace OctoTool.Commands {
         public void Execute(string[] args) {
             var task = Task.Run(async () => await query.Execute());
             task.Wait();
-            Console.WriteLine(JsonConvert.SerializeObject(task.Result));
+            if (args.ContainsOrdinalIgnoreCase("--json")) {
+                Console.WriteLine(JsonConvert.SerializeObject(task.Result));
+            } else {
+                task.Result.ToList().ForEach(x => Console.WriteLine(x));
+            }
         }
 
         public bool ShouldExecute(string[] args) {
